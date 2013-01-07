@@ -45,40 +45,6 @@ public class GeoCoder {
             System.out.printf("Latitude and longitude : %s, %s%n", coords2.getLatitude(), coords2.getLongitude());
             System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coords2.getLatitude(), coords2.getLongitude());
         }
-
-
-    }
-
-    private static HashMap<String, String> loadOptionsFromCommandLine(String[] args) throws Exception {
-        HashMap<String, String> options = null;
-        String key = null;
-        boolean hasFlag = false;
-
-        if (args.length == 0) {
-            return options;
-        }
-
-        for(String arg : args) {
-            if (arg.trim().startsWith("-")) {
-                // this tells us which option it is
-                if (arg.trim().equals("-i") || arg.trim().equals("-o")) {
-                    hasFlag = true;
-                    key = arg;
-                } else {
-                    throw new Exception (String.format("Unknown option : %s", arg) );
-                }
-            } else {
-                if (hasFlag) {
-                    options.put(key, arg);
-                    hasFlag = false;
-                } else {
-                    // assuming that this is an address
-                    options.put("-a", arg);
-                }
-            }
-        }
-
-        return options;
     }
 
 
