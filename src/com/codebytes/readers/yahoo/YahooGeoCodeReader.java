@@ -1,6 +1,7 @@
 package com.codebytes.readers.yahoo;
 
 import com.codebytes.Coordinates;
+import com.codebytes.Options;
 import com.codebytes.readers.AbstractGeoCodeReader;
 import com.codebytes.readers.IGeoCodeReader;
 import org.w3c.dom.Document;
@@ -15,6 +16,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
+import java.util.HashMap;
 
 public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCodeReader {
 
@@ -30,9 +32,9 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
         return String.format(urlFormat, appId, address.replaceAll(" ", "+"));
     }
 
-    public Coordinates getGpsCoordinates(String address) {
+    public Coordinates getGpsCoordinates(Options options) {
 
-        String url = makeTargetUrl(urlFormat, address);
+        String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
         Coordinates coords = null;
         //http://where.yahooapis.com/geocode?line1=18027+81st+LN+NE&line2=Kenmore,+WA&appid=00ff0ece4e3ca671a610241bc3c1ad0500c32bf7
 

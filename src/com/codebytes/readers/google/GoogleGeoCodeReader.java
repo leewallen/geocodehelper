@@ -1,6 +1,7 @@
 package com.codebytes.readers.google;
 
 import com.codebytes.Coordinates;
+import com.codebytes.Options;
 import com.codebytes.readers.AbstractGeoCodeReader;
 import com.codebytes.readers.IGeoCodeReader;
 import org.w3c.dom.Document;
@@ -16,6 +17,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -32,21 +34,14 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 
 //    http://maps.googleapis.com/maps/api/geocode/xml?address=space+needle&sensor=false
 //
-//            /GeocodeResponse/result/geometry/location
+//    /GeocodeResponse/result/geometry/location
 //    /GeocodeResponse/result/geometry/location/lat
 //    /GeocodeResponse/result/geometry/location/lng
-//
 //    /GeocodeResponse/result/formatted_address
 
+    public Coordinates getGpsCoordinates(Options options) {
 
-    private String address = null;
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-
-
-    public Coordinates getGpsCoordinates(String address) {
-
-        String url = makeTargetUrl(urlFormat, address);
+        String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
         Coordinates coords = null;
 
         String response = getResponse(url);
