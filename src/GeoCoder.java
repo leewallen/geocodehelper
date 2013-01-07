@@ -13,7 +13,10 @@ public class GeoCoder {
     public static void main(String[] args) {
         // write your code
         // here
-
+        if (args.length < 1) {
+            System.out.printf("Usage: %n\tGeoCode <address to geocode>%n%n");
+            System.exit(1);
+        }
         String address = args[0];
 
         IGeoCodeReader yahooGeoCodeReader = GeoCodeReaderFactory.getInstance().makeReader(GeoCodeApiEnum.YAHOO);
