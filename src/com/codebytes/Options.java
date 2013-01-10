@@ -1,59 +1,28 @@
 package com.codebytes;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: Lee
  * Date: 1/6/13
  * Time: 7:32 PM
  */
-public class Options {
+public class Options implements IOptions {
 
 
-    private HashMap<String, String> options = null;
+    private Map<String, String> options = null;
 
+    @Override
     public boolean hasOpt(String optKey) {
         return options.containsKey(optKey);
     }
 
+    @Override
     public String getOpt(String optKey) {
         return options.get(optKey);
     }
 
-    public Options(String[] args) throws Exception {
-        this.options = loadOptionsFromCommandLine(args);
+    public Options(Map<String, String> options) {
+        this.options = options;
     }
-
-    private static HashMap<String, String> loadOptionsFromCommandLine(String[] args) throws Exception {
-        HashMap<String, String> options = new HashMap<String, String>();
-        String key = null;
-        boolean hasFlag = false;
-
-        if (args.length == 0) {
-            return options;
-        }
-
-        for(String arg : args) {
-            if (arg.trim().startsWith("-")) {
-                // this tells us which option it is
-                if (arg.trim().equals("-i") || arg.trim().equals("-o")) {
-                    hasFlag = true;
-                    key = arg;
-                } else {
-                    throw new Exception (String.format("Unknown option : %s", arg) );
-                }
-            } else {
-                if (hasFlag) {
-                    options.put(key, arg);
-                    hasFlag = false;
-                } else {
-                    // assuming that this is an address
-                    options.put("-a", arg);
-                }
-            }
-        }
-
-        return options;
-    }
-
 }

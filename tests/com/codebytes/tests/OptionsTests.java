@@ -1,6 +1,7 @@
 package com.codebytes.tests;
 
-import com.codebytes.Options;
+import com.codebytes.IOptions;
+import com.codebytes.OptionsFactory;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -16,13 +17,34 @@ public class OptionsTests {
     @Test
     public void VerifyAddressOptIsFound() {
 
-        Options opts = null;
+        IOptions opts = null;
         try {
-            opts = new Options(new String[] {"booger"});
+            opts = OptionsFactory.getInstance().loadOptions(new String[]{"booger"});
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
         assertEquals(opts.getOpt("-a"), "booger");
     }
+
+    @Test
+    public void VerifyInputAndOutputFilePaths() {
+
+        IOptions opts = null;
+        try {
+            opts = OptionsFactory.getInstance().loadOptions(new String[]{"-i", "inputfile.txt", "-o", "outputfile.txt"});
+        } catch (Exception e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        assertEquals(opts.getOpt("-i"), "inputfile.txt");
+        assertEquals(opts.getOpt("-o"), "outputfile.txt");
+    }
+
+    public void VerifyInvalidOptionThrows() {
+
+        IOptions opts = null;
+
+    }
+
 }

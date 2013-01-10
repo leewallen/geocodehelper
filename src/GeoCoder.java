@@ -1,10 +1,9 @@
 import com.codebytes.Coordinates;
-import com.codebytes.Options;
+import com.codebytes.IOptions;
+import com.codebytes.OptionsFactory;
 import com.codebytes.readers.GeoCodeApiEnum;
 import com.codebytes.readers.GeoCodeReaderFactory;
 import com.codebytes.readers.IGeoCodeReader;
-
-import java.util.HashMap;
 
 /**
  * User: Lee
@@ -22,12 +21,11 @@ public class GeoCoder {
             System.out.printf("\tGeoCode [-i <input file containing addresses to geocode> [-o <output file>]]%n%n");
             System.exit(1);
         }
-        Options options = null;
 
-
+        IOptions options = null;
 
         try {
-            options = new Options(args);
+            options = OptionsFactory.getInstance().loadOptions(args);
         } catch (Exception e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return;

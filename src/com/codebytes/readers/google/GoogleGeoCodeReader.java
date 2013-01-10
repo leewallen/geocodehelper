@@ -1,7 +1,7 @@
 package com.codebytes.readers.google;
 
 import com.codebytes.Coordinates;
-import com.codebytes.Options;
+import com.codebytes.IOptions;
 import com.codebytes.readers.AbstractGeoCodeReader;
 import com.codebytes.readers.IGeoCodeReader;
 import org.w3c.dom.Document;
@@ -17,7 +17,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,7 +38,7 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 //    /GeocodeResponse/result/geometry/location/lng
 //    /GeocodeResponse/result/formatted_address
 
-    public Coordinates getGpsCoordinates(Options options) {
+    public Coordinates getGpsCoordinates(IOptions options) {
 
         String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
         Coordinates coords = null;

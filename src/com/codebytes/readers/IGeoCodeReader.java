@@ -1,9 +1,7 @@
 package com.codebytes.readers;
 
 import com.codebytes.Coordinates;
-import com.codebytes.Options;
-
-import java.util.HashMap;
+import com.codebytes.IOptions;
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,5 +11,5 @@ import java.util.HashMap;
  * To change this template use File | Settings | File Templates.
  */
 public interface IGeoCodeReader {
-    Coordinates getGpsCoordinates(Options options);
+    Coordinates getGpsCoordinates(IOptions options);
 }
