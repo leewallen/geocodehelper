@@ -5,6 +5,9 @@ import com.codebytes.readers.GeoCodeApiEnum;
 import com.codebytes.readers.GeoCodeReaderFactory;
 import com.codebytes.readers.IGeoCodeReader;
 
+import java.io.PrintStream;
+import java.util.List;
+
 /**
  * User: Lee
  * Date: 1/4/13
@@ -31,17 +34,19 @@ public class GeoCoder {
             return;
         }
 
-        IGeoCodeReader yahooGeoCodeReader = GeoCodeReaderFactory.getInstance().makeReader(GeoCodeApiEnum.YAHOO);
-        Coordinates coords1 = yahooGeoCodeReader.getGpsCoordinates(options);
+        IGeoCodeReader yahooGeoCodeReader = GeoCodeReaderFactory.getInstance().makeReader(GeoCodeApiEnum.YAHOO, options);
+        List<Coordinates> coords1 = yahooGeoCodeReader.getGpsCoordinates(options);
 
-        IGeoCodeReader geoCodeReader = GeoCodeReaderFactory.getInstance().makeReader(GeoCodeApiEnum.GOOGLE);
-        Coordinates coords2 = geoCodeReader.getGpsCoordinates(options);
+        IGeoCodeReader geoCodeReader = GeoCodeReaderFactory.getInstance().makeReader(GeoCodeApiEnum.GOOGLE, options);
+        List<Coordinates> coords2 = geoCodeReader.getGpsCoordinates(options);
 
-        if (options.hasOpt("-a")) {
-            System.out.printf("Latitude and longitude : %s, %s%n", coords1.getLatitude(), coords1.getLongitude());
-            System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coords1.getLatitude(), coords1.getLongitude());
-            System.out.printf("Latitude and longitude : %s, %s%n", coords2.getLatitude(), coords2.getLongitude());
-            System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coords2.getLatitude(), coords2.getLongitude());
+        for(Coordinates coord : coords1) {
+            System.out.printf("Latitude and longitude : %s, %s%n", coord.getLatitude(), coord.getLongitude());
+            System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coord.getLatitude(), coord.getLongitude());
+        }
+        for(Coordinates coord : coords2) {
+            System.out.printf("Latitude and longitude : %s, %s%n", coord.getLatitude(), coord.getLongitude());
+            System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coord.getLatitude(), coord.getLongitude());
         }
     }
 

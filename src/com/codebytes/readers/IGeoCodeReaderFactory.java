@@ -1,5 +1,6 @@
 package com.codebytes.readers;
 
+import com.codebytes.Options;
 import com.codebytes.readers.IGeoCodeReader;
 
 /**
@@ -9,5 +10,5 @@ import com.codebytes.readers.IGeoCodeReader;
  * To change this template use File | Settings | File Templates.
  */
 public interface IGeoCodeReaderFactory {
-    IGeoCodeReader makeReader(GeoCodeApiEnum geoCodeApiEnum);
+    IGeoCodeReader makeReader(GeoCodeApiEnum geoCodeApiEnum, Options options);
 }

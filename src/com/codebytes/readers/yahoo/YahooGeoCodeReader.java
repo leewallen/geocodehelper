@@ -16,11 +16,16 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
+import java.util.List;
 
 public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCodeReader {
 
-    private static String urlFormat = "http://where.yahooapis.com/geocode?appid=%s&q=%s";
-    private static String appId = "00ff0ece4e3ca671a610241bc3c1ad0500c32bf7";
+    private final static String urlFormat = "http://where.yahooapis.com/geocode?appid=%s&q=%s";
+    private final static String appId = "00ff0ece4e3ca671a610241bc3c1ad0500c32bf7";
+
+    private final static String statusXpathString = "/ResultSet/Error/text()";
+    private final static String latitudeXpathString = "/ResultSet/Result/latitude/text()";
+    private final static String longitudeXpathString = "/ResultSet/Result/longitude/text()";
 
     private String address = null;
     public String getAddress() { return address; }
@@ -31,37 +36,31 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
         return String.format(urlFormat, appId, address.replaceAll(" ", "+"));
     }
 
-    public Coordinates getGpsCoordinates(IOptions options) {
+    public List<Coordinates> getGpsCoordinates(IOptions options) {
 
+        if (options.hasOpt("-a")) {
+            return getGpsCoordinatesFromAddress(options);
+        } else if (options.hasOpt("-i") && options.hasOpt("-o")) {
+            return getGpsCoordinatesFromFile(options);
+        }
+        return null;
+
+    }
+
+
+    public List<Coordinates> getGpsCoordinatesFromAddress(IOptions options) {
         String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
-        Coordinates coords = null;
+        List<Coordinates> coords = null;
         //http://where.yahooapis.com/geocode?line1=18027+81st+LN+NE&line2=Kenmore,+WA&appid=00ff0ece4e3ca671a610241bc3c1ad0500c32bf7
 
         String response = getResponse(url);
 
         try {
 
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new ByteArrayInputStream(response.getBytes()));
-
-            XPathFactory xPathFactory =  XPathFactory.newInstance();
-            XPathExpression errorXpath = xPathFactory.newXPath().compile("/ResultSet/Error/text()");
-
-            int errorCode = Integer.parseInt(((Node) errorXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue());
-
-            if (errorCode != PlaceFinderErrorEnum.NO_ERROR.getErrorNumber()) {
-                return null;
+            Coordinates coord = getCoordinatesFromResponse(statusXpathString, latitudeXpathString, longitudeXpathString, response);
+            if (coord != null) {
+                coords.add(coord);
             }
-
-            XPathExpression latXpath = xPathFactory.newXPath().compile("/ResultSet/Result/latitude/text()");
-            XPathExpression lonXpath = xPathFactory.newXPath().compile("/ResultSet/Result/longitude/text()");
-
-            String lat = ((Node)latXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-            String lon = ((Node)lonXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-
-            coords = new Coordinates();
-            coords.parse(String.format("%s, %s", lat, lon));
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -76,4 +75,30 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
         return coords;
     }
 
+    public List<Coordinates> getGpsCoordinatesFromFile(IOptions options) {
+        String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
+        List<Coordinates> coords = null;
+        //http://where.yahooapis.com/geocode?line1=18027+81st+LN+NE&line2=Kenmore,+WA&appid=00ff0ece4e3ca671a610241bc3c1ad0500c32bf7
+
+        String response = getResponse(url);
+
+        try {
+
+            Coordinates coord = getCoordinatesFromResponse(statusXpathString, latitudeXpathString, longitudeXpathString, response);
+            if (coord != null) {
+                coords.add(coord);
+            }
+
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (SAXException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (XPathExpressionException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
+        return coords;
+    }
 }

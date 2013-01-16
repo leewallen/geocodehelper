@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,47 +39,19 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 //    /GeocodeResponse/result/geometry/location/lng
 //    /GeocodeResponse/result/formatted_address
 
-    public Coordinates getGpsCoordinates(IOptions options) {
-
-        String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
+    public List<Coordinates> getGpsCoordinates(IOptions options) {
         Coordinates coords = null;
 
-        String response = getResponse(url);
+        if (options.hasOpt("-a")) {
 
-        try {
+            coords = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat);
 
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new ByteArrayInputStream(response.getBytes()));
+        } else if (options.hasOpt("-i") && options.hasOpt("-o")) {
 
-            XPathFactory xPathFactory =  XPathFactory.newInstance();
-            XPathExpression statusXpath = xPathFactory.newXPath().compile("/GeocodeResponse/status/text()");
-
-            String status = ((Node) statusXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-
-            if (GoogleErrorEnum.valueOf(status) != GoogleErrorEnum.OK) {
-                return null;
-            }
-
-            XPathExpression latXpath = xPathFactory.newXPath().compile("/GeocodeResponse/result/geometry/location/lat/text()");
-            XPathExpression lonXpath = xPathFactory.newXPath().compile("/GeocodeResponse/result/geometry/location/lng/text()");
-
-            String lat = ((Node)latXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-            String lon = ((Node)lonXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-
-            coords = new Coordinates();
-            coords.parse(String.format("%s, %s", lat, lon));
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (SAXException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
 
         return coords;
     }
+
 }

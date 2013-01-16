@@ -1,7 +1,10 @@
 package com.codebytes.readers;
 
+import com.codebytes.Options;
 import com.codebytes.readers.google.GoogleGeoCodeReader;
 import com.codebytes.readers.yahoo.YahooGeoCodeReader;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -23,7 +26,7 @@ public class GeoCodeReaderFactory implements IGeoCodeReaderFactory {
         return _instance;
     }
 
-    public IGeoCodeReader makeReader(GeoCodeApiEnum geoCodeApiEnum) {
+    public IGeoCodeReader makeReader(GeoCodeApiEnum geoCodeApiEnum, Options options) {
 
         IGeoCodeReader geoCodeReader = null;
 

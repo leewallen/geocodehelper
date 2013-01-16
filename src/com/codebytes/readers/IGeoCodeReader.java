@@ -3,6 +3,8 @@ package com.codebytes.readers;
 import com.codebytes.Coordinates;
 import com.codebytes.IOptions;
 
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Lee
@@ -11,5 +13,5 @@ import com.codebytes.IOptions;
  * To change this template use File | Settings | File Templates.
  */
 public interface IGeoCodeReader {
-    Coordinates getGpsCoordinates(IOptions options);
+    List<Coordinates> getGpsCoordinates(IOptions options);
 }
