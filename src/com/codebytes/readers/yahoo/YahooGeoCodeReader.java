@@ -53,12 +53,14 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
         List<Coordinates> coords = new ArrayList<Coordinates>();
 
         if (options.hasOpt("-a")) {
-            String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
+            String address = options.getOpt("-a");
+            String url = makeTargetUrl(urlFormat, address);
 
             String response = getResponse(url);
             try {
                 if (wasCallSuccessful(response)) {
                     Coordinates coord = getGpsCoordinatesForAddress(response, latXpath, lonXpath);
+                    coord.setLocationName(address);
                     coords.add(coord);
                 }
             } catch (IOException e) {
@@ -83,6 +85,7 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
                 try {
                     if (wasCallSuccessful(response)) {
                         Coordinates coord = getGpsCoordinatesForAddress(response, latXpath, lonXpath);
+                        coord.setLocationName(address);
                         coords.add(coord);
                     }
                 } catch (IOException e) {

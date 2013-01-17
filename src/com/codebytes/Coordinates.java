@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 public class Coordinates {
     private Double latitude = 0.;
     private Double longitude = 0.;
+    private String locationName = null;
 
     public Coordinates(){
     }
@@ -19,6 +20,11 @@ public class Coordinates {
     public Coordinates(Double lat, Double lon){
         this.latitude = lat;
         this.longitude = lon;
+    }
+
+    public Coordinates(String latLonValue, String locationName){
+        this.parse(latLonValue);
+        setLocationName(locationName);
     }
 
     public void setLatitude(Double latitude){
@@ -35,6 +41,14 @@ public class Coordinates {
 
     public Double getLongitude(){
         return this.longitude;
+    }
+
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
+
+    public String getLocationName() {
+        return this.locationName;
     }
 
     public Boolean parse(String input){
