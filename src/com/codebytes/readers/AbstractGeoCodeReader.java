@@ -123,9 +123,7 @@ public abstract class AbstractGeoCodeReader {
             String lat = ((Node)latXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
             String lon = ((Node)lonXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
 
-            coords = new Coordinates();
-            coords.parse(String.format("%s, %s", lat, lon));
-
+            coords = new Coordinates(lat, lon);
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SAXException e) {
