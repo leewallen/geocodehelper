@@ -1,6 +1,7 @@
 package com.codebytes.readers;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
 public class AddressFileReader implements IAddressFileReader {
 
     public List<String> read(String inputFilePath) {
-        List<String> addresses = null;
+        List<String> addresses = new ArrayList<String>();
 
         File inputFile = new File(inputFilePath);
 

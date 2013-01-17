@@ -42,11 +42,11 @@ public class GeoCoder {
 
         for(Coordinates coord : coords1) {
             System.out.printf("Latitude and longitude : %s, %s%n", coord.getLatitude(), coord.getLongitude());
-            System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coord.getLatitude(), coord.getLongitude());
+            System.out.printf("Yahoo Url : https://maps.google.com/maps?q=%s,+%s%n", coord.getLatitude(), coord.getLongitude());
         }
         for(Coordinates coord : coords2) {
             System.out.printf("Latitude and longitude : %s, %s%n", coord.getLatitude(), coord.getLongitude());
-            System.out.printf("Url : https://maps.google.com/maps?q=%s,+%s%n", coord.getLatitude(), coord.getLongitude());
+            System.out.printf("Google Url : https://maps.google.com/maps?q=%s,+%s%n", coord.getLatitude(), coord.getLongitude());
         }
     }
 

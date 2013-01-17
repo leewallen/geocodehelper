@@ -44,6 +44,9 @@ public abstract class AbstractGeoCodeReader {
         this.db = db;
     }
 
+    public String makeTargetUrl(String urlFormat, String address) {
+        return String.format(urlFormat, address.replaceAll(" ", "+"));
+    }
 
     private DocumentBuilderFactory dbf = null;
     protected DocumentBuilderFactory getDocumentBuilderFactory() {
@@ -55,9 +58,6 @@ public abstract class AbstractGeoCodeReader {
         this.dbf = dbf;
     }
 
-    public String makeTargetUrl(String urlFormat, String address) {
-        return String.format(urlFormat, address.replaceAll(" ", "+"));
-    }
 
     public String getResponse(String url) {
         HttpURLConnection connection = null;
@@ -109,22 +109,13 @@ public abstract class AbstractGeoCodeReader {
 
 
 
-    protected Coordinates getGpsCoordinatesForAddress(String response, String latXpath, String lonXpath, String statusXpath) {
+    protected Coordinates getGpsCoordinatesForAddress(String response, String latXpath, String lonXpath) {
         Coordinates coords = null;
 
         try {
-
-
             Document doc = getDocumentBuilder().parse(new ByteArrayInputStream(response.getBytes()));
 
             XPathFactory xPathFactory =  XPathFactory.newInstance();
-            XPathExpression statusXpathExpression = xPathFactory.newXPath().compile(statusXpath);
-
-            String status = ((Node) statusXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-
-            if (GoogleErrorEnum.valueOf(status) != GoogleErrorEnum.OK) {
-                return null;
-            }
 
             XPathExpression latXpathExpression = xPathFactory.newXPath().compile(latXpath);
             XPathExpression lonXpathExpression = xPathFactory.newXPath().compile(lonXpath);

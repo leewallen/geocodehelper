@@ -18,6 +18,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +32,7 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 
     private static String urlFormat = "http://maps.googleapis.com/maps/api/geocode/xml?address=%s&sensor=false";
     private static String latXpath = "/GeocodeResponse/result/geometry/location/lat/text()";
-    private static String lonXpath = "/GeocodeResponse/result/geometry/location/lon/text()";
+    private static String lonXpath = "/GeocodeResponse/result/geometry/location/lng/text()";
     private static String statusXpath = "/GeocodeResponse/status/text()";
 
 //    http://maps.googleapis.com/maps/api/geocode/xml?address=space+needle&sensor=false
@@ -49,14 +50,14 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 
         String status = ((Node) statusXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
 
-        if (GoogleErrorEnum.valueOf(status) != GoogleErrorEnum.OK) {
+        if (!status.equals(GoogleErrorEnum.OK.getStatus())) {
             return false;
         }
         return true;
     }
 
     public List<Coordinates> getGpsCoordinates(IOptions options) {
-        List<Coordinates> coords = null;
+        List<Coordinates> coords = new ArrayList<Coordinates>();
 
         if (options.hasOpt("-a")) {
             String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
@@ -64,7 +65,7 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
             String response = getResponse(url);
             try {
                 if (wasCallSuccessful(response)) {
-                    Coordinates coord = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat, latXpath, lonXpath);
+                    Coordinates coord = getGpsCoordinatesForAddress(response, latXpath, lonXpath);
                     coords.add(coord);
                 }
             } catch (IOException e) {
@@ -88,9 +89,7 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 
                 try {
                     if (wasCallSuccessful(response)) {
-                        Coordinates coord = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat, latXpath, lonXpath);
-                        coords.add(getGpsCoordinatesForAddress(response, urlFormat, latXpath, lonXpath));
-
+                        Coordinates coord = getGpsCoordinatesForAddress(response, latXpath, lonXpath);
                         coords.add(coord);
                     }
                 } catch (IOException e) {

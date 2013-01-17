@@ -5,6 +5,7 @@ import com.codebytes.IOptions;
 import com.codebytes.readers.AbstractGeoCodeReader;
 import com.codebytes.readers.AddressFileReader;
 import com.codebytes.readers.IGeoCodeReader;
+import com.codebytes.readers.google.GoogleErrorEnum;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -17,20 +18,30 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCodeReader {
 
     private final static String urlFormat = "http://where.yahooapis.com/geocode?appid=%s&q=%s";
     private final static String appId = "00ff0ece4e3ca671a610241bc3c1ad0500c32bf7";
+    private final static String statusXpath = "/ResultSet/Error/text()";
+    private final static String latXpath = "/ResultSet/Result/latitude/text()";
+    private final static String lonXpath = "/ResultSet/Result/longitude/text()";
 
-    private final static String statusXpathString = "/ResultSet/Error/text()";
-    private final static String latitudeXpathString = "/ResultSet/Result/latitude/text()";
-    private final static String longitudeXpathString = "/ResultSet/Result/longitude/text()";
+    private boolean wasCallSuccessful(String response) throws IOException, SAXException, XPathExpressionException {
+        Document doc = getDocumentBuilder().parse(new ByteArrayInputStream(response.getBytes()));
 
-    private String address = null;
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+        XPathFactory xPathFactory =  XPathFactory.newInstance();
+        XPathExpression statusXpathExpression = xPathFactory.newXPath().compile(statusXpath);
+
+        String status = ((Node) statusXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
+
+        if (Integer.parseInt(status) != PlaceFinderErrorEnum.NO_ERROR.getErrorNumber()) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String makeTargetUrl(String urlFormat, String address) {
@@ -39,12 +50,24 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
 
 
     public List<Coordinates> getGpsCoordinates(IOptions options) {
-        List<Coordinates> coords = null;
+        List<Coordinates> coords = new ArrayList<Coordinates>();
 
         if (options.hasOpt("-a")) {
+            String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
 
-            Coordinates coord = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat, latitudeXpathString, longitudeXpathString, statusXpathString);
-            coords.add(coord);
+            String response = getResponse(url);
+            try {
+                if (wasCallSuccessful(response)) {
+                    Coordinates coord = getGpsCoordinatesForAddress(response, latXpath, lonXpath);
+                    coords.add(coord);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (SAXException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (XPathExpressionException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
 
         } else if (options.hasOpt("-i")) {
 
@@ -54,7 +77,21 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
             List<String> addresses = addressFileReader.read(inputFilePath);
 
             for(String address : addresses) {
-                coords.add(getGpsCoordinatesForAddress(address, urlFormat, latitudeXpathString, longitudeXpathString, statusXpathString));
+                String url = makeTargetUrl(urlFormat, address);
+                String response = getResponse(url);
+
+                try {
+                    if (wasCallSuccessful(response)) {
+                        Coordinates coord = getGpsCoordinatesForAddress(response, latXpath, lonXpath);
+                        coords.add(coord);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (SAXException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (XPathExpressionException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
             }
         }
 
