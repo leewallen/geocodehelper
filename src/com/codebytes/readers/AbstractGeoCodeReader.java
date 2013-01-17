@@ -31,6 +31,13 @@ public abstract class AbstractGeoCodeReader {
 
     private DocumentBuilder db = null;
     protected DocumentBuilder getDocumentBuilder() {
+        if (db == null) {
+            try {
+                db = getDocumentBuilderFactory().newDocumentBuilder();
+            } catch (ParserConfigurationException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
         return db;
     }
     protected void setDocumentBuilder(DocumentBuilder db) {
@@ -40,6 +47,8 @@ public abstract class AbstractGeoCodeReader {
 
     private DocumentBuilderFactory dbf = null;
     protected DocumentBuilderFactory getDocumentBuilderFactory() {
+        if (dbf == null)
+            dbf = DocumentBuilderFactory.newInstance();
         return dbf;
     }
     protected void setDocumentBuilderFactory(DocumentBuilderFactory dbf) {
@@ -98,65 +107,34 @@ public abstract class AbstractGeoCodeReader {
     }
 
 
-    protected Coordinates getCoordinatesFromResponse(String statusXpathString, String latitudeXpathString, String longitudeXpathString, String response) throws SAXException, IOException, XPathExpressionException, ParserConfigurationException {
-        Document doc = this.getDocumentBuilder().parse(new ByteArrayInputStream(response.getBytes()));
-
-        if (getDocumentBuilderFactory() == null) setDocumentBuilderFactory(DocumentBuilderFactory.newInstance());
-        if (getDocumentBuilder() == null) setDocumentBuilder(getDocumentBuilderFactory().newDocumentBuilder());
-
-        XPathFactory xPathFactory =  XPathFactory.newInstance();
-        XPathExpression errorXpath = xPathFactory.newXPath().compile(statusXpathString);
-
-        int errorCode = Integer.parseInt(((Node) errorXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue());
-
-        if (errorCode != PlaceFinderErrorEnum.NO_ERROR.getErrorNumber()) {
-            return null;
-        }
-
-        XPathExpression latXpath = xPathFactory.newXPath().compile(latitudeXpathString);
-        XPathExpression lonXpath = xPathFactory.newXPath().compile(longitudeXpathString);
-
-        String lat = ((Node)latXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-        String lon = ((Node)lonXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-
-        Coordinates coord = new Coordinates();
-        coord.parse(String.format("%s, %s", lat, lon));
-        return coord;
-    }
 
 
-    protected Coordinates getGpsCoordinatesForAddress(String address, String urlFormat) {
-        String url = makeTargetUrl(urlFormat, address);
+    protected Coordinates getGpsCoordinatesForAddress(String response, String latXpath, String lonXpath, String statusXpath) {
         Coordinates coords = null;
-
-        String response = getResponse(url);
 
         try {
 
-            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder db = dbf.newDocumentBuilder();
-            Document doc = db.parse(new ByteArrayInputStream(response.getBytes()));
+
+            Document doc = getDocumentBuilder().parse(new ByteArrayInputStream(response.getBytes()));
 
             XPathFactory xPathFactory =  XPathFactory.newInstance();
-            XPathExpression statusXpath = xPathFactory.newXPath().compile("/GeocodeResponse/status/text()");
+            XPathExpression statusXpathExpression = xPathFactory.newXPath().compile(statusXpath);
 
-            String status = ((Node) statusXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
+            String status = ((Node) statusXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
 
             if (GoogleErrorEnum.valueOf(status) != GoogleErrorEnum.OK) {
                 return null;
             }
 
-            XPathExpression latXpath = xPathFactory.newXPath().compile("/GeocodeResponse/result/geometry/location/lat/text()");
-            XPathExpression lonXpath = xPathFactory.newXPath().compile("/GeocodeResponse/result/geometry/location/lng/text()");
+            XPathExpression latXpathExpression = xPathFactory.newXPath().compile(latXpath);
+            XPathExpression lonXpathExpression = xPathFactory.newXPath().compile(lonXpath);
 
-            String lat = ((Node)latXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
-            String lon = ((Node)lonXpath.evaluate(doc, XPathConstants.NODE)).getNodeValue();
+            String lat = ((Node)latXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
+            String lon = ((Node)lonXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
 
             coords = new Coordinates();
             coords.parse(String.format("%s, %s", lat, lon));
 
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (IOException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         } catch (SAXException e) {

@@ -1,5 +1,6 @@
 package com.codebytes.readers;
 
+import com.codebytes.IOptions;
 import com.codebytes.Options;
 import com.codebytes.readers.google.GoogleGeoCodeReader;
 import com.codebytes.readers.yahoo.YahooGeoCodeReader;
@@ -26,7 +27,7 @@ public class GeoCodeReaderFactory implements IGeoCodeReaderFactory {
         return _instance;
     }
 
-    public IGeoCodeReader makeReader(GeoCodeApiEnum geoCodeApiEnum, Options options) {
+    public IGeoCodeReader makeReader(GeoCodeApiEnum geoCodeApiEnum, IOptions options) {
 
         IGeoCodeReader geoCodeReader = null;
 

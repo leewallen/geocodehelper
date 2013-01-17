@@ -3,6 +3,7 @@ package com.codebytes.readers.yahoo;
 import com.codebytes.Coordinates;
 import com.codebytes.IOptions;
 import com.codebytes.readers.AbstractGeoCodeReader;
+import com.codebytes.readers.AddressFileReader;
 import com.codebytes.readers.IGeoCodeReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -36,67 +37,25 @@ public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCod
         return String.format(urlFormat, appId, address.replaceAll(" ", "+"));
     }
 
+
     public List<Coordinates> getGpsCoordinates(IOptions options) {
+        List<Coordinates> coords = null;
 
         if (options.hasOpt("-a")) {
-            return getGpsCoordinatesFromAddress(options);
-        } else if (options.hasOpt("-i") && options.hasOpt("-o")) {
-            return getGpsCoordinatesFromFile(options);
-        }
-        return null;
 
-    }
+            Coordinates coord = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat, latitudeXpathString, longitudeXpathString, statusXpathString);
+            coords.add(coord);
 
+        } else if (options.hasOpt("-i")) {
 
-    public List<Coordinates> getGpsCoordinatesFromAddress(IOptions options) {
-        String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
-        List<Coordinates> coords = null;
-        //http://where.yahooapis.com/geocode?line1=18027+81st+LN+NE&line2=Kenmore,+WA&appid=00ff0ece4e3ca671a610241bc3c1ad0500c32bf7
+            String inputFilePath = options.getOpt("-i");
 
-        String response = getResponse(url);
+            AddressFileReader addressFileReader = new AddressFileReader();
+            List<String> addresses = addressFileReader.read(inputFilePath);
 
-        try {
-
-            Coordinates coord = getCoordinatesFromResponse(statusXpathString, latitudeXpathString, longitudeXpathString, response);
-            if (coord != null) {
-                coords.add(coord);
+            for(String address : addresses) {
+                coords.add(getGpsCoordinatesForAddress(address, urlFormat, latitudeXpathString, longitudeXpathString, statusXpathString));
             }
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (SAXException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-
-        return coords;
-    }
-
-    public List<Coordinates> getGpsCoordinatesFromFile(IOptions options) {
-        String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
-        List<Coordinates> coords = null;
-        //http://where.yahooapis.com/geocode?line1=18027+81st+LN+NE&line2=Kenmore,+WA&appid=00ff0ece4e3ca671a610241bc3c1ad0500c32bf7
-
-        String response = getResponse(url);
-
-        try {
-
-            Coordinates coord = getCoordinatesFromResponse(statusXpathString, latitudeXpathString, longitudeXpathString, response);
-            if (coord != null) {
-                coords.add(coord);
-            }
-
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (SAXException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (XPathExpressionException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
 
         return coords;

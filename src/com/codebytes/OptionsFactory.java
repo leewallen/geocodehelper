@@ -31,7 +31,7 @@ public class OptionsFactory implements IOptionsFactory {
         for(String arg : args) {
             if (arg.trim().startsWith("-")) {
                 // this tells us which option it is
-                if (arg.trim().equals("-i") || arg.trim().equals("-o")) {
+                if (arg.trim().equals("-i") || arg.trim().equals("-o") || arg.trim().equals("-a")) {
                     hasFlag = true;
                     key = arg;
                 } else {
@@ -42,8 +42,7 @@ public class OptionsFactory implements IOptionsFactory {
                     options.put(key, arg);
                     hasFlag = false;
                 } else {
-                    // assuming that this is an address
-                    options.put("-a", arg);
+                    throw new UnknownOptionException(String.format("Unknown option : %s", arg) );
                 }
             }
         }

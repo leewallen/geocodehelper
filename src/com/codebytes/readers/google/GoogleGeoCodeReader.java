@@ -3,6 +3,7 @@ package com.codebytes.readers.google;
 import com.codebytes.Coordinates;
 import com.codebytes.IOptions;
 import com.codebytes.readers.AbstractGeoCodeReader;
+import com.codebytes.readers.AddressFileReader;
 import com.codebytes.readers.IGeoCodeReader;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -29,8 +30,9 @@ import java.util.List;
 public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCodeReader {
 
     private static String urlFormat = "http://maps.googleapis.com/maps/api/geocode/xml?address=%s&sensor=false";
-
-
+    private static String latXpath = "/GeocodeResponse/result/geometry/location/lat/text()";
+    private static String lonXpath = "/GeocodeResponse/result/geometry/location/lon/text()";
+    private static String statusXpath = "/GeocodeResponse/status/text()";
 
 //    http://maps.googleapis.com/maps/api/geocode/xml?address=space+needle&sensor=false
 //
@@ -39,17 +41,67 @@ public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCo
 //    /GeocodeResponse/result/geometry/location/lng
 //    /GeocodeResponse/result/formatted_address
 
+    private boolean wasCallSuccessful(String response) throws IOException, SAXException, XPathExpressionException {
+        Document doc = getDocumentBuilder().parse(new ByteArrayInputStream(response.getBytes()));
+
+        XPathFactory xPathFactory =  XPathFactory.newInstance();
+        XPathExpression statusXpathExpression = xPathFactory.newXPath().compile(statusXpath);
+
+        String status = ((Node) statusXpathExpression.evaluate(doc, XPathConstants.NODE)).getNodeValue();
+
+        if (GoogleErrorEnum.valueOf(status) != GoogleErrorEnum.OK) {
+            return false;
+        }
+        return true;
+    }
+
     public List<Coordinates> getGpsCoordinates(IOptions options) {
-        Coordinates coords = null;
+        List<Coordinates> coords = null;
 
         if (options.hasOpt("-a")) {
+            String url = makeTargetUrl(urlFormat, options.getOpt("-a"));
 
-            coords = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat);
+            String response = getResponse(url);
+            try {
+                if (wasCallSuccessful(response)) {
+                    Coordinates coord = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat, latXpath, lonXpath);
+                    coords.add(coord);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (SAXException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            } catch (XPathExpressionException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
 
-        } else if (options.hasOpt("-i") && options.hasOpt("-o")) {
+        } else if (options.hasOpt("-i")) {
 
+            String inputFilePath = options.getOpt("-i");
+
+            AddressFileReader addressFileReader = new AddressFileReader();
+            List<String> addresses = addressFileReader.read(inputFilePath);
+
+            for(String address : addresses) {
+                String url = makeTargetUrl(urlFormat, address);
+                String response = getResponse(url);
+
+                try {
+                    if (wasCallSuccessful(response)) {
+                        Coordinates coord = getGpsCoordinatesForAddress(options.getOpt("-a"), urlFormat, latXpath, lonXpath);
+                        coords.add(getGpsCoordinatesForAddress(response, urlFormat, latXpath, lonXpath));
+
+                        coords.add(coord);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (SAXException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (XPathExpressionException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
         }
-
 
         return coords;
     }

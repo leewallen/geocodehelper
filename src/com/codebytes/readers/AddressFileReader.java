@@ -10,10 +10,13 @@ import java.util.List;
  */
 public class AddressFileReader implements IAddressFileReader {
 
-    public List<String> read(String inputFile) {
+    public List<String> read(String inputFilePath) {
         List<String> addresses = null;
 
-        if (inputFile.isEmpty())
+        File inputFile = new File(inputFilePath);
+
+
+        if (inputFilePath.isEmpty() || !inputFile.exists())
             return addresses;
 
         try {
