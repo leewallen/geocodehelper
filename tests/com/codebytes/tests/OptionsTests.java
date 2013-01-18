@@ -2,6 +2,7 @@ package com.codebytes.tests;
 
 import com.codebytes.IOptions;
 import com.codebytes.OptionsFactory;
+import com.codebytes.UnknownOptionException;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -19,12 +20,19 @@ public class OptionsTests {
 
         IOptions opts = null;
         try {
-            opts = OptionsFactory.getInstance().loadOptions(new String[]{"booger"});
+            opts = OptionsFactory.getInstance().loadOptions(new String[]{"-a", "booger"});
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         assertEquals(opts.getOpt("-a"), "booger");
+    }
+
+    @Test(expected = UnknownOptionException.class)
+    public void VerifyUnknownOptThrows() throws UnknownOptionException {
+
+        IOptions opts = null;
+        opts = OptionsFactory.getInstance().loadOptions(new String[]{"-b", "booger"});
     }
 
     @Test
@@ -34,7 +42,7 @@ public class OptionsTests {
         try {
             opts = OptionsFactory.getInstance().loadOptions(new String[]{"-i", "inputfile.txt", "-o", "outputfile.txt"});
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
 
         assertEquals(opts.getOpt("-i"), "inputfile.txt");

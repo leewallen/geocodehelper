@@ -1,5 +1,10 @@
 package com.codebytes.writers;
 
+import com.codebytes.Coordinates;
+
+import java.io.FileOutputStream;
+import java.util.List;
+
 /**
  * Created with IntelliJ IDEA.
  * User: lwallen
@@ -8,4 +13,6 @@ package com.codebytes.writers;
  * To change this template use File | Settings | File Templates.
  */
 public interface IGeocodeFileWriter {
+    void write(List<Coordinates> coordinates, String filePath);
+    void write(List<Coordinates> coordinates, String filePath, boolean shouldAppend);
 }

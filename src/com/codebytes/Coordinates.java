@@ -22,11 +22,14 @@ public class Coordinates {
         this.longitude= Double.parseDouble(lon);
     }
 
-
     public Coordinates(String lat, String lon, String locationName){
         this.latitude = Double.parseDouble(lat);
         this.longitude= Double.parseDouble(lon);
         setLocationName(locationName);
+    }
+
+    public String toString() {
+        return String.format("%s\t%s\t%s%n", getLocationName(), getLatitude(), getLongitude());
     }
 
     public void setLatitude(Double latitude){

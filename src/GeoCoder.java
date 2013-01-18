@@ -4,6 +4,7 @@ import com.codebytes.OptionsFactory;
 import com.codebytes.readers.GeoCodeApiEnum;
 import com.codebytes.readers.GeoCodeReaderFactory;
 import com.codebytes.readers.IGeoCodeReader;
+import com.codebytes.writers.AddressLocationFileWriter;
 
 import java.io.PrintStream;
 import java.util.List;
@@ -40,12 +41,24 @@ public class GeoCoder {
         IGeoCodeReader geoCodeReader = GeoCodeReaderFactory.getInstance().makeReader(GeoCodeApiEnum.GOOGLE, options);
         List<Coordinates> coords2 = geoCodeReader.getGpsCoordinates(options);
 
-        for(Coordinates coord : coords1) {
-            System.out.printf("Yahoo Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+
+        if (options.hasOpt("-o") && !options.getOpt("-o").isEmpty()) {
+
+            String outputFile = options.getOpt("-o");
+            AddressLocationFileWriter locationFileWriter = new AddressLocationFileWriter();
+            locationFileWriter.write(coords1, outputFile);
+            locationFileWriter.write(coords2, outputFile, true);
+
+        } else {
+            for(Coordinates coord : coords1) {
+                System.out.printf("Yahoo Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+            }
+            for(Coordinates coord : coords2) {
+                System.out.printf("Google Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+            }
         }
-        for(Coordinates coord : coords2) {
-            System.out.printf("Google Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
-        }
+
+
     }
 
 
