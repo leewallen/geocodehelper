@@ -1,18 +1,15 @@
 package com.codebytes.readers.yahoo;
 
-import com.codebytes.Coordinates;
-import com.codebytes.IOptions;
+import com.codebytes.utility.Coordinates;
+import com.codebytes.utility.IOptions;
 import com.codebytes.readers.AbstractGeoCodeReader;
 import com.codebytes.readers.AddressFileReader;
 import com.codebytes.readers.IGeoCodeReader;
-import com.codebytes.readers.google.GoogleErrorEnum;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -20,6 +17,13 @@ import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Created with IntelliJ IDEA.
+ * User: Lee
+ * Date: 1/4/13
+ * Time: 10:36 PM
+ */
 
 public class YahooGeoCodeReader extends AbstractGeoCodeReader implements IGeoCodeReader {
 

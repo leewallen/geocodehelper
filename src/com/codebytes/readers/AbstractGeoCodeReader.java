@@ -1,8 +1,6 @@
 package com.codebytes.readers;
 
-import com.codebytes.Coordinates;
-import com.codebytes.readers.google.GoogleErrorEnum;
-import com.codebytes.readers.yahoo.PlaceFinderErrorEnum;
+import com.codebytes.utility.Coordinates;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;

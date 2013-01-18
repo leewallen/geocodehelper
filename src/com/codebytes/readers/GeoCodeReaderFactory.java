@@ -1,11 +1,8 @@
 package com.codebytes.readers;
 
-import com.codebytes.IOptions;
-import com.codebytes.Options;
+import com.codebytes.utility.IOptions;
 import com.codebytes.readers.google.GoogleGeoCodeReader;
 import com.codebytes.readers.yahoo.YahooGeoCodeReader;
-
-import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Created with IntelliJ IDEA.

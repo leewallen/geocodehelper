@@ -1,7 +1,7 @@
 package com.codebytes.readers.google;
 
-import com.codebytes.Coordinates;
-import com.codebytes.IOptions;
+import com.codebytes.utility.Coordinates;
+import com.codebytes.utility.IOptions;
 import com.codebytes.readers.AbstractGeoCodeReader;
 import com.codebytes.readers.AddressFileReader;
 import com.codebytes.readers.IGeoCodeReader;
@@ -9,9 +9,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -26,14 +23,13 @@ import java.util.List;
  * User: Lee
  * Date: 1/4/13
  * Time: 10:36 PM
- * To change this template use File | Settings | File Templates.
  */
 public class GoogleGeoCodeReader extends AbstractGeoCodeReader implements IGeoCodeReader {
 
-    private static String urlFormat = "http://maps.googleapis.com/maps/api/geocode/xml?address=%s&sensor=false";
-    private static String latXpath = "/GeocodeResponse/result/geometry/location/lat/text()";
-    private static String lonXpath = "/GeocodeResponse/result/geometry/location/lng/text()";
-    private static String statusXpath = "/GeocodeResponse/status/text()";
+    private final static String urlFormat = "http://maps.googleapis.com/maps/api/geocode/xml?address=%s&sensor=false";
+    private final static String latXpath = "/GeocodeResponse/result/geometry/location/lat/text()";
+    private final static String lonXpath = "/GeocodeResponse/result/geometry/location/lng/text()";
+    private final static String statusXpath = "/GeocodeResponse/status/text()";
 
 //    http://maps.googleapis.com/maps/api/geocode/xml?address=space+needle&sensor=false
 //

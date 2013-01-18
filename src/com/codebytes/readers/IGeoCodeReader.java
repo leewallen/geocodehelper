@@ -1,7 +1,7 @@
 package com.codebytes.readers;
 
-import com.codebytes.Coordinates;
-import com.codebytes.IOptions;
+import com.codebytes.utility.Coordinates;
+import com.codebytes.utility.IOptions;
 
 import java.util.List;
 

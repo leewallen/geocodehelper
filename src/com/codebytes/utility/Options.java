@@ -1,4 +1,4 @@
-package com.codebytes;
+package com.codebytes.utility;
 
 import java.util.Map;
 

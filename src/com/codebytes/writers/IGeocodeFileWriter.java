@@ -1,8 +1,7 @@
 package com.codebytes.writers;
 
-import com.codebytes.Coordinates;
+import com.codebytes.utility.Coordinates;
 
-import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -13,6 +12,6 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public interface IGeocodeFileWriter {
-    void write(List<Coordinates> coordinates, String filePath);
-    void write(List<Coordinates> coordinates, String filePath, boolean shouldAppend);
+    void write(List<Coordinates> coordinates) throws MissingFileException;
+    void write(List<Coordinates> coordinates, boolean shouldAppend) throws MissingFileException;
 }

@@ -1,8 +1,6 @@
 package com.codebytes.readers;
 
-import com.codebytes.IOptions;
-import com.codebytes.Options;
-import com.codebytes.readers.IGeoCodeReader;
+import com.codebytes.utility.IOptions;
 
 /**
  * User: Lee

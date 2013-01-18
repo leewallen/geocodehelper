@@ -1,12 +1,15 @@
-import com.codebytes.Coordinates;
-import com.codebytes.IOptions;
-import com.codebytes.OptionsFactory;
+import com.codebytes.utility.Coordinates;
+import com.codebytes.utility.IOptions;
+import com.codebytes.utility.OptionsFactory;
 import com.codebytes.readers.GeoCodeApiEnum;
 import com.codebytes.readers.GeoCodeReaderFactory;
 import com.codebytes.readers.IGeoCodeReader;
 import com.codebytes.writers.AddressLocationFileWriter;
+import com.codebytes.writers.MissingFileException;
 
-import java.io.PrintStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -45,9 +48,21 @@ public class GeoCoder {
         if (options.hasOpt("-o") && !options.getOpt("-o").isEmpty()) {
 
             String outputFile = options.getOpt("-o");
-            AddressLocationFileWriter locationFileWriter = new AddressLocationFileWriter();
-            locationFileWriter.write(coords1, outputFile);
-            locationFileWriter.write(coords2, outputFile, true);
+            try {
+                FileWriter fileWriter = new FileWriter(outputFile);
+                fileWriter.write(String.format("Address file created : %s%n", new Date()));
+                fileWriter.flush();
+                fileWriter.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            AddressLocationFileWriter locationFileWriter = new AddressLocationFileWriter(outputFile);
+            try {
+                locationFileWriter.write(coords1, true);
+                locationFileWriter.write(coords2, true);
+            } catch (MissingFileException e) {
+                e.printStackTrace();
+            }
 
         } else {
             for(Coordinates coord : coords1) {
