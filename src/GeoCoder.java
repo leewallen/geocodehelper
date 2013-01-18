@@ -46,7 +46,6 @@ public class GeoCoder {
 
 
         if (options.hasOpt("-o") && !options.getOpt("-o").isEmpty()) {
-
             String outputFile = options.getOpt("-o");
             try {
                 FileWriter fileWriter = new FileWriter(outputFile);
@@ -63,15 +62,16 @@ public class GeoCoder {
             } catch (MissingFileException e) {
                 e.printStackTrace();
             }
-
         }
 
-        for(Coordinates coord : coords1) {
-            System.out.printf("Yahoo Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
-        }
+        if ((options.hasOpt("-v") && options.hasOpt("-o")) || !options.hasOpt("-o")) {
+            for(Coordinates coord : coords1) {
+                System.out.printf("Yahoo Url for \"%s\" :%n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+            }
 
-        for(Coordinates coord : coords2) {
-            System.out.printf("Google Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+            for(Coordinates coord : coords2) {
+                System.out.printf("Google Url for \"%s\" :%n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+            }
         }
     }
 }
