@@ -31,9 +31,9 @@ public class AddressLocationFileWriter implements IGeocodeFileWriter {
             }
 
         } catch (FileNotFoundException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         } finally {
             try {
                 if (fileOutputStream != null) {
@@ -41,7 +41,7 @@ public class AddressLocationFileWriter implements IGeocodeFileWriter {
                     fileOutputStream.close();
                 }
             } catch (IOException e) {
-                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                e.printStackTrace();
             }
         }
     }
