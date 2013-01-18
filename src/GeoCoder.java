@@ -1,9 +1,9 @@
-import com.codebytes.utility.Coordinates;
-import com.codebytes.utility.IOptions;
-import com.codebytes.utility.OptionsFactory;
 import com.codebytes.readers.GeoCodeApiEnum;
 import com.codebytes.readers.GeoCodeReaderFactory;
 import com.codebytes.readers.IGeoCodeReader;
+import com.codebytes.utility.Coordinates;
+import com.codebytes.utility.IOptions;
+import com.codebytes.utility.OptionsFactory;
 import com.codebytes.writers.AddressLocationFileWriter;
 import com.codebytes.writers.MissingFileException;
 
@@ -64,17 +64,14 @@ public class GeoCoder {
                 e.printStackTrace();
             }
 
-        } else {
-            for(Coordinates coord : coords1) {
-                System.out.printf("Yahoo Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
-            }
-            for(Coordinates coord : coords2) {
-                System.out.printf("Google Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
-            }
         }
 
+        for(Coordinates coord : coords1) {
+            System.out.printf("Yahoo Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+        }
 
+        for(Coordinates coord : coords2) {
+            System.out.printf("Google Url for \"%s\" : %n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
+        }
     }
-
-
 }
