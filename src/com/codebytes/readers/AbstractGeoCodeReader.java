@@ -44,7 +44,7 @@ public abstract class AbstractGeoCodeReader {
         this.db = db;
     }
 
-    public String makeTargetUrl(String urlFormat, String address) {
+    protected String makeTargetUrl(String urlFormat, String address) {
         return String.format(urlFormat, address.replaceAll(" ", "+"));
     }
 
@@ -59,7 +59,8 @@ public abstract class AbstractGeoCodeReader {
     }
 
 
-    public String getResponse(String url) {
+
+    protected String getResponse(String url) {
         HttpURLConnection connection = null;
         OutputStreamWriter wr = null;
         BufferedReader rd  = null;
