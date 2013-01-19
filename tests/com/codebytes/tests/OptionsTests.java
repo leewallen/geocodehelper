@@ -1,8 +1,8 @@
 package com.codebytes.tests;
 
-import com.codebytes.IOptions;
-import com.codebytes.OptionsFactory;
-import com.codebytes.UnknownOptionException;
+import com.codebytes.utility.IOptions;
+import com.codebytes.utility.OptionsFactory;
+import com.codebytes.utility.UnknownOptionException;
 import org.junit.*;
 import static org.junit.Assert.*;
 

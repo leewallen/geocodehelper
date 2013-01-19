@@ -2,6 +2,7 @@ import com.codebytes.readers.GeoCodeApiEnum;
 import com.codebytes.readers.GeoCodeReaderFactory;
 import com.codebytes.readers.IGeoCodeReader;
 import com.codebytes.utility.Coordinates;
+import com.codebytes.utility.CoordinatesHelper;
 import com.codebytes.utility.IOptions;
 import com.codebytes.utility.OptionsFactory;
 import com.codebytes.writers.AddressLocationFileWriter;
@@ -73,5 +74,10 @@ public class GeoCoder {
                 System.out.printf("Google Url for \"%s\" :%n\thttps://maps.google.com/maps?q=%s,+%s%n", coord.getLocationName(), coord.getLatitude(), coord.getLongitude());
             }
         }
+
+        double totalDistance = CoordinatesHelper.calculateDistanceInKilometers(coords2.toArray(new Coordinates[0]), 0);
+        System.out.printf("Total distance (km): %.2f%n", totalDistance);
+        totalDistance = CoordinatesHelper.convertKilometersToMiles(totalDistance);
+        System.out.printf("Total distance (mi): %.2f%n", totalDistance);
     }
 }
